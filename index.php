@@ -1,6 +1,29 @@
 <?php
     date_default_timezone_set('America/Belem');
     session_start();
+
+    function verificaRota($sPagina) {
+        $vPaginas = ["index","inicial","empresa","produtos","servicos","contato"];
+        if(in_array($sPagina,$vPaginas)){
+            if(is_file(__DIR__."/".$sPagina.".php")){
+                if($sPagina == "index")
+                    $sPagina = "inicial";
+                require_once($sPagina.".php");
+            }
+        }else{
+            if($sPagina == "")
+                require_once("inicial.php");
+            else
+                require_once("erro.php");
+        }//if(in_array($sPagina,$vPaginas)){
+    }//function verificaRota($sPagina) use $vPaginas {
+
+    $vRota = parse_url("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+
+    $sPaginaRota = $vRota['path'];
+    $sPagina = substr($sPaginaRota,1);
+    $sPagina = strtolower($sPagina);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,16 +46,7 @@
 <body>
 <?php
     require_once("inc/menu.php");
-
-    if(isset($_GET['sPagina']) && $_GET['sPagina'] != ""){
-        if(is_file(__DIR__."/".$_GET['sPagina'].".php")){
-            require_once($_GET['sPagina'].".php");
-        }else{
-            require_once("inicial.php");
-        }
-    }else{
-        require_once("inicial.php");
-    }
+    verificaRota($sPagina);
 ?>
 
 <div class="panel-footer">Todos os direitos reservados - <?php echo date("Y")?></div>
