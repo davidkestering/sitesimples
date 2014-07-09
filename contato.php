@@ -17,7 +17,7 @@
 ?>
 
 <div class="jumbotron">
-<form action="index.php?sPagina=contato" method="post">
+<form action="contato" method="post">
     <div class="input-group">
         <input type="text" class="form-control" size="50" placeholder="Nome" name="fNome" id="fNome" />
     </div>
