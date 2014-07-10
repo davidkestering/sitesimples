@@ -1,25 +1,7 @@
 <?php
-    date_default_timezone_set('America/Belem');
-    session_start();
-
-    function verificaRota($sPagina) {
-        $vPaginas = ["index","inicial","empresa","produtos","servicos","contato"];
-        if(in_array($sPagina,$vPaginas)){
-            if(is_file(__DIR__."/".$sPagina.".php")){
-                if($sPagina == "index")
-                    $sPagina = "inicial";
-                require_once($sPagina.".php");
-            }
-        }else{
-            if($sPagina == "")
-                require_once("inicial.php");
-            else
-                require_once("erro.php");
-        }//if(in_array($sPagina,$vPaginas)){
-    }//function verificaRota($sPagina) use $vPaginas {
+    require_once("conexao.php");
 
     $vRota = parse_url("http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
-
     $sPaginaRota = $vRota['path'];
     $sPagina = substr($sPaginaRota,1);
     $sPagina = strtolower($sPagina);
@@ -46,9 +28,60 @@
 <body>
 <?php
     require_once("inc/menu.php");
-    verificaRota($sPagina);
-?>
 
+    $sSqlPagina = "SELECT * FROM paginas WHERE pagina = :sPagina ;";
+    $rConsultaPagina = $oConexao->prepare($sSqlPagina);
+    $rConsultaPagina->bindValue(":sPagina",strtolower(str_replace("ç","c",utf8_encode($sPagina))),PDO::PARAM_STR);
+    $rConsultaPagina->execute();
+    $vPagina = $rConsultaPagina->fetch(PDO::FETCH_ASSOC);
+    if(isset($vPagina) && is_array($vPagina) && count($vPagina) > 0){
+?>
+    <h1><?=utf8_encode($vPagina['conteudo'])?></h1>
+<?php
+        if($vPagina['pagina'] == "contato")
+            require_once("contato.php");
+    }
+
+    if(isset($_POST['fPesquisa']) && $_POST['fPesquisa'] != ""){
+        $sTextoPesquisado = $_POST['fPesquisa'];
+        $sTextoParaPesquisa = utf8_decode($_POST['fPesquisa']);
+
+        $sSqlPesquisa = "SELECT * FROM paginas WHERE conteudo LIKE :sPesquisa OR pagina LIKE :sPesquisa ;";
+        $rConsultaPesquisa = $oConexao->prepare($sSqlPesquisa);
+        $rConsultaPesquisa->bindValue(":sPesquisa","%{$sTextoParaPesquisa}%",PDO::PARAM_STR);
+        $rConsultaPesquisa->execute();
+        $vvResultadoPesquisa = $rConsultaPesquisa->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+<br />
+<h4>Você pesquisou por "<strong style="color: blue;"><?=$_POST['fPesquisa']?></strong>"</h4>
+<?php
+        if(isset($vvResultadoPesquisa) && is_array($vvResultadoPesquisa) && count($vvResultadoPesquisa) > 0){
+?>
+<h4><?=(count($vvResultadoPesquisa) > 1) ? "Foram encontradas ".count($vvResultadoPesquisa)." referências do texto pesquisado!" : "Foi encontrada 1 referência do texto pesquisado!"?></h4>
+<br />
+<div class="row">
+    <div class="col-sm-4">
+        <div class="list-group">
+<?php
+            foreach($vvResultadoPesquisa as $nIndice => $vResultadoPesquisa){
+?>
+            <a href="<?=strtolower(str_replace("ç","c",utf8_encode($vResultadoPesquisa['pagina'])))?>" class="list-group-item"><?=ucfirst(utf8_encode($vResultadoPesquisa['pagina']))?></a>
+<?php
+            }
+?>
+        </div>
+    </div><!-- /.col-sm-4 -->
+</div>
+<?php
+        }else{
+?>
+<h4 style="color: red;">Não foram escontradas referências para a sua pesquisa!</h4>
+<?php
+        }
+    }
+?>
+<br />
 <div class="panel-footer">Todos os direitos reservados - <?php echo date("Y")?></div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
