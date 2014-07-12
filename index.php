@@ -5,6 +5,8 @@
     $sPaginaRota = $vRota['path'];
     $sPagina = substr($sPaginaRota,1);
     $sPagina = strtolower($sPagina);
+    if($sPagina == "")
+        $sPagina = "index";
 
 ?>
 <!DOCTYPE html>
