@@ -8,6 +8,23 @@
     if($sPagina == "")
         $sPagina = "index";
 
+    if(isset($sPagina) && $sPagina == "sair"){
+        $_SESSION['oLoginAdmin'] = "";
+        unset($_SESSION['oLoginAdmin']);
+        header("Location: index");
+        exit();
+    }
+
+    //print_r($sPagina);
+    //die();
+
+    $nIdPagina = "0";
+    if(strpos($sPagina,"/") == true){
+        $vPagina = explode("/",$sPagina);
+        $nIdPagina = $vPagina[1];
+        $sPagina = $vPagina[0];
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +35,7 @@
     <title>Bootstrap 101 Template</title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -26,6 +43,8 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript" src="../js/nicEdit.js"></script>
 </head>
 <body>
 <?php
@@ -42,6 +61,10 @@
 <?php
         if($vPagina['pagina'] == "contato")
             require_once("contato.php");
+    }
+
+    if(isset($sPagina) && $sPagina == "admin"){
+        require_once("admin.php");
     }
 
     if(isset($_POST['fPesquisa']) && $_POST['fPesquisa'] != ""){
@@ -83,12 +106,10 @@
         }
     }
 ?>
-<br />
+<br /><br /><br /><br />
 <div class="panel-footer">Todos os direitos reservados - <?php echo date("Y")?></div>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="js/bootstrap.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
 </body>
 </html>

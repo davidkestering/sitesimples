@@ -17,6 +17,23 @@ try{
     $oConexao->exec("use $sBancoDados");
     echo "Banco de dados ".$sBancoDados." criado com sucesso! <br />";
 
+    $sTabelaUsuario = "`usuario`";
+    $sSqlCriaTabela ="DROP TABLE IF EXISTS $sTabelaUsuario;
+                        CREATE TABLE IF NOT EXISTS $sTabelaUsuario (
+                        `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                          `login` varchar(255) DEFAULT NULL,
+                          `senha` varchar(255) DEFAULT NULL
+                        ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;" ;
+    $oConexao->exec($sSqlCriaTabela);
+    echo "Tabela ".$sTabelaUsuario." criada com sucesso! <br />";
+
+    $sSenha = password_hash("123456",PASSWORD_DEFAULT);
+    $sSqlInsereDados = utf8_decode("TRUNCATE TABLE $sTabelaUsuario;
+                        INSERT INTO $sTabelaUsuario (`id`, `login`, `senha`) VALUES
+                        (1, 'admin', '$sSenha');");
+    $oConexao->exec($sSqlInsereDados);
+    echo utf8_decode("Usuário <strong>admin</strong> inserido com sucesso! Utilize a senha <strong>123456</strong> para acessar a área administrativa! <br />");
+
     $sTabela = "`paginas`";
     $sSqlCriaTabela ="DROP TABLE IF EXISTS $sTabela;
                         CREATE TABLE IF NOT EXISTS $sTabela (

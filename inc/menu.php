@@ -15,7 +15,7 @@
                             if(isset($vsPagina) && is_array($vsPagina) && $vsPagina['pagina'] != ""){
                 ?>
                 <li <?=(isset($sPagina) && $sPagina != "" && $sPagina == strtolower(str_replace("ç","c",utf8_encode($vsPagina['pagina'])))) ? 'class="active"' : ""; ?>>
-                    <a href="<?=strtolower(str_replace("ç","c",utf8_encode($vsPagina['pagina'])))?>">
+                    <a href="../<?=strtolower(str_replace("ç","c",utf8_encode($vsPagina['pagina'])))?>">
                         <?=(strtolower($vsPagina['pagina']) == "index") ? "Home" : ucfirst(utf8_encode($vsPagina['pagina']))?>
                     </a>
                 </li>
@@ -24,8 +24,16 @@
                         }//foreach($rRes as $nIndice => $vsPagina){
                     }//if(isset($rRes) && is_array($rRes)){
                 ?>
+                <li <?=(isset($sPagina) && $sPagina != "" && $sPagina == "admin") ? 'class="active"' : ""?>><a href="../admin">Admin</a></li>
+                <?php
+                    if(isset($_SESSION['oLoginAdmin']) && $_SESSION['oLoginAdmin'] != ""){
+                ?>
+                <li><a href="../sair">Sair</a></li>
+                <?php
+                    }
+                ?>
             </ul>
-            <form class="navbar-form navbar-right" action="index" method="post">
+            <form class="navbar-form navbar-right" action="../index" method="post">
                 <input type="text" class="form-control" name="fPesquisa" id="fPesquisa" placeholder="Pesquisar">
             </form>
         </div><!-- /.navbar-collapse -->
